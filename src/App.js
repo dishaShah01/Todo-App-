@@ -1,16 +1,18 @@
 import React from "react"
 import TodoItem from "./TodoItem"
-import TodosData from "./TodosData"
+
 import './App.css'
 
 class App extends React.Component {
     constructor() {
         super()
         this.state = {
-            todos: TodosData
+            todos: [],
+            inputtext:""
         }
         this.handleChange = this.handleChange.bind(this)
         this.adding = this.adding.bind(this)
+        this.changeText = this.changeText.bind(this)
     }
     handleChange(id) {
         this.setState(prevState => {
@@ -29,12 +31,23 @@ class App extends React.Component {
             }
         })
     }
-    adding(){
-        const addtodos=[...TodosData,{ id: this.state.todos.length, text: "text", completed: false }]
-        console.log(addtodos)
-        return{
-            todos:addtodos
-        }
+    
+    changeText(e){
+        const {name,value}=e.target
+        
+        this.setState({
+            [name]:value
+        })
+    
+    }
+    adding(e){    
+        e.preventDefault() 
+        if(this.state.inputtext!==""){     
+        this.setState({
+            todos:[...this.state.todos,{ id: this.state.todos.length, text: this.state.inputtext, completed: false }],
+            inputtext:""
+        })
+    }
     }
     render() {
         const todoItems = this.state.todos.map(item => <TodoItem key={item.id} item={item} handleChange={this.handleChange} />)
@@ -42,8 +55,12 @@ class App extends React.Component {
         return (
             <div className="todo-list">
               <h2>YOUR TASKS :</h2>
-              <div><p><input type="text" id="new" placeholder="Type here" /><button id="add" onClick={this.adding}>ADD</button></p></div>
-                {todoItems}
+              <form onSubmit={this.adding}><p>
+              <input type="text" id="new" name="inputtext" value={this.state.inputtext} placeholder="Type here" onChange={this.changeText} />
+              <button id="add">ADD</button>
+              </p>
+              </form>
+              {todoItems}                
             </div>
         )    
     }
